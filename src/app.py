@@ -1,17 +1,22 @@
 from flask import Flask, request, jsonify
+from flask_sqlalchemy import SQLAlchemy
 import jwt
 import datetime
+from db_models import Users, engine
+from config import conf
+from flask_sqlalchemy import SQLAlchemy
 
 app = Flask(__name__)
-
+app.config["SQLALCHEMY_DATABASE_URI"] = conf.postgres_url
 # Секретный ключ для подписи JWT
 SECRET_KEY = 'your_secret_key'
+db = SQLAlchemy(app)
 
-# Пример пользователя
-users = {
-    "user1": "password1",
-    "user2": "password2"
-}
+
+def get_users():
+    with Session(engine) as session:
+        result = session.execute(select(User.name))
+    return result.all()
 
 # Функция для создания JWT
 def create_token(username):
@@ -38,11 +43,13 @@ def login():
     username = request.json.get('username')
     password = request.json.get('password')
 
-    if username in users and users[username] == password:
-        token = create_token(username)
-        return jsonify({'token': token})
-    else:
-        return jsonify({'message': 'Invalid credentials'}), 401
+    users = get_users()
+
+    for user in users: 
+        if user.name == username and user.password == password:
+            token = create_token(username)
+            return jsonify({'token': token})
+    return jsonify({'message': 'Invalid credentials'}), 401
 
 # Защищенный эндпоинт
 @app.route('/protected', methods=['GET'])
@@ -58,4 +65,6 @@ def protected():
     return jsonify({'message': f'Hello, {username}! This is a protected route.'})
 
 if __name__ == '__main__':
+    with app.app_context():
+        db.create_all()
     app.run(debug=True)

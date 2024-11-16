@@ -1,33 +1,33 @@
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, ForeignKey
+from sqlalchemy.orm import mapped_column
+from sqlalchemy.ext.declarative import declarative_base
+
 from config import conf
 engine = create_engine(conf.postgres_url)
-meta = MetaData()
 
 
-users = Table(
-    conf.postgres_table_users, meta, 
-    Column('id', Integer, primary_key = True), 
-    Column('name', String), 
-    Column('surname', String),
-    Column('patronymic', String),
-    Column('login', String),
-    Column('password_hash', String),
-)
+Base = declarative_base()
 
-papers = Table(
-    conf.postgres_table_papers, meta, 
-    Column('id', Integer, primary_key = True), 
-    Column('title', String), 
-    Column('link_ru', String),
-    Column('link_en', String),
-    Column('filepath', String),
-)
 
-views = Table(
-    conf.postgres_table_views, meta, 
-    Column('id', Integer, primary_key = True), 
-    mapped_column(Integer, ForeignKey("users.id"))
-    mapped_column(Integer, ForeignKey("papers.id"))
-)
+class Users(Base):
+    __tablename__ = 'users'
+    id = Column(Integer, primary_key=True)
+    name = Column(String)
+    surname = Column(String)
+    patronymic = Column(String)
+    login = Column(String)
+    password_hash = Column(String)
 
-meta.create_all(engine)
+class Papers(Base):
+    __tablename__ = 'papers'
+    id = Column(Integer, primary_key=True)
+    title = Column(String)
+    link_ru = Column(String)
+    link_en = Column(String)
+    filepath = Column(String)
+
+class Favourites(Base):
+    __tablename__ = 'favourites'
+    id = Column(Integer, primary_key=True)
+    user_id = mapped_column(Integer, ForeignKey("users.id"))
+    paper_id = mapped_column(Integer, ForeignKey("paper.id"))
