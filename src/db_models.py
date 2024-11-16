@@ -1,11 +1,7 @@
 from sqlalchemy import create_engine, MetaData, Table, Column, Integer, String, ForeignKey
 from sqlalchemy.orm import mapped_column
-from sqlalchemy.ext.declarative import declarative_base
-
-from config import conf
-engine = create_engine(conf.postgres_url)
-
-db = SQLAlchemy(app)
+from .config import conf
+from . import db
 
 class Users(db.Model):
     __tablename__ = 'users'
@@ -28,4 +24,4 @@ class Favourites(db.Model):
     __tablename__ = 'favourites'
     id = Column(Integer, primary_key=True)
     user_id = mapped_column(Integer, ForeignKey("users.id"))
-    paper_id = mapped_column(Integer, ForeignKey("paper.id"))
+    paper_id = mapped_column(Integer, ForeignKey("papers.id"))

@@ -1,55 +1,26 @@
-from flask import Flask, request, jsonify
-from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy import create_engine,  MetaData, Table, Column, Integer, String, ForeignKey
-from sqlalchemy.orm import mapped_column
+from flask import request, jsonify
+from sqlalchemy.orm import sessionmaker
+from sqlalchemy import select
+from sqlalchemy import create_engine
+from flask import current_app as app
 
 import jwt
 import datetime
 
-from config import conf
+from .db_models import Users
+from .config import conf
 
-app = Flask(__name__)
-app.config["SQLALCHEMY_DATABASE_URI"] = conf.postgres_url
+engine = create_engine(conf.postgres_url)
+
+def get_users():
+    Session = sessionmaker(engine)
+    with Session() as session:
+        result = session.execute(select(Users))
+    return result.all()
 
 
 # Секретный ключ для подписи JWT
 SECRET_KEY = 'your_secret_key'
-
-engine = create_engine(conf.postgres_url)
-
-db = SQLAlchemy(app)
-
-class Users(db.Model):
-    __tablename__ = 'users'
-    id = Column(Integer, primary_key=True)
-    name = Column(String)
-    surname = Column(String)
-    patronymic = Column(String)
-    login = Column(String)
-    password_hash = Column(String)
-
-class Papers(db.Model):
-    __tablename__ = 'papers'
-    id = Column(Integer, primary_key=True)
-    title = Column(String)
-    link_ru = Column(String)
-    link_en = Column(String)
-    filepath = Column(String)
-
-class Favourites(db.Model):
-    __tablename__ = 'favourites'
-    id = Column(Integer, primary_key=True)
-    user_id = mapped_column(Integer, ForeignKey("users.id"))
-    paper_id = mapped_column(Integer, ForeignKey("papers.id"))
-
-
-def get_users():
-    with Session(engine) as session:
-        result = session.execute(select(User.name))
-    return result.all()
-
-
-
 
 # Функция для создания JWT
 def create_token(username):
@@ -96,8 +67,3 @@ def protected():
         return jsonify({'message': username}), 403
 
     return jsonify({'message': f'Hello, {username}! This is a protected route.'})
-
-if __name__ == '__main__':
-    with app.app_context():
-        db.create_all()
-    app.run(debug=True)
