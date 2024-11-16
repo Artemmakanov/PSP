@@ -5,11 +5,9 @@ from sqlalchemy.ext.declarative import declarative_base
 from config import conf
 engine = create_engine(conf.postgres_url)
 
+db = SQLAlchemy(app)
 
-Base = declarative_base()
-
-
-class Users(Base):
+class Users(db.Model):
     __tablename__ = 'users'
     id = Column(Integer, primary_key=True)
     name = Column(String)
@@ -18,7 +16,7 @@ class Users(Base):
     login = Column(String)
     password_hash = Column(String)
 
-class Papers(Base):
+class Papers(db.Model):
     __tablename__ = 'papers'
     id = Column(Integer, primary_key=True)
     title = Column(String)
@@ -26,7 +24,7 @@ class Papers(Base):
     link_en = Column(String)
     filepath = Column(String)
 
-class Favourites(Base):
+class Favourites(db.Model):
     __tablename__ = 'favourites'
     id = Column(Integer, primary_key=True)
     user_id = mapped_column(Integer, ForeignKey("users.id"))
