@@ -1,6 +1,6 @@
 all:
-	docker compose -f docker-compose-pg.yml
-	docker compose -f docker-compose-pg.yml
+	docker compose -f docker-compose-pg.yml up -d
+	docker compose -f docker-compose-app.yml up -d
 
 stop:
 	docker stop postgres_container
@@ -9,4 +9,4 @@ stop:
 rm:
 	docker rm postgres_container
 	docker rm app
-	docker rmi app
+	docker rmi psp-app
