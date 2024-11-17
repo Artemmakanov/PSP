@@ -1,0 +1,23 @@
+version: '3'
+
+services:
+  app:
+    container_name: app
+    build:
+      dockerfile: ./docker/Dockerfile
+    env_file: 
+      - ./config.env
+    ports:
+      - "5000:5000"
+    networks:
+      - net
+    
+
+networks:
+  net:
+    external: true
+    name: net
+
+volumes:
+  pgdata:
+    driver: local
