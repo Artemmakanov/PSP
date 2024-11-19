@@ -2,15 +2,10 @@
 
 
 # Register
-curl localhost:5000/register -d '{"login": "bar", "password": "foo", "surname": "sidorov", "patronymic": "", "name": "oleg"}' -H 'Content-Type: application/json'
+curl -H  "Content-Type: application/json" -X POST -L http://0.0.0.0:5000/register --data '{"name": "Artem", "password": "12345", "surname": "Makanov", "patronymic": "", "login": "abcd"}'
 
 # Login
-curl localhost:5000/login -d '{"login": "bar", "password": "foo"}' -H 'Content-Type: application/json'
-
+curl -H  "Content-Type: application/json" -X POST -L http://0.0.0.0:5000/login --data '{"password": "12345", "login": "abcd"}'
 
 # Protected
-curl -X GET http://localhost:5000/protected \
-     -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6ImJhciIsImV4cCI6MTczMTc5NjE4Nn0._420RSuWmh241DFD2ZQqwrSqyN5ffs_KVBO198Y2Wgg"
-
-curl -X POST http://localhost:5000/change_password -H 'Content-Type: application/json' "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6ImJhciIsImV4cCI6MTczMTc5NjE4Nn0._420RSuWmh241DFD2ZQqwrSqyN5ffs_KVBO198Y2Wgg" 
-
+curl -H  "Content-Type: application/json" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6ImFiY2QiLCJleHAiOjE3MzIwMDM5NjB9.YxE-EFPzafkWzDap54WQoHlWCU7rhGBorHku7USQSqI" -X GET -L http://0.0.0.0:5000/protected 
