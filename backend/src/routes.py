@@ -74,14 +74,6 @@ def protected():
 # Эндпоинт для создания пользователя
 @app.route('/register', methods=['POST'])
 def register():
-
-    token = request.headers.get('Authorization')
-    if not token:
-        return jsonify({'message': 'Token is missing'}), 403
-
-    login = verify_token(token)
-    if isinstance(login, str) and 'Token' in login:
-        return jsonify({'message': login}), 403
     
     name = request.json.get('name')
     password = request.json.get('password')
