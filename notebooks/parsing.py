@@ -7,6 +7,7 @@ from pprint import pprint
 import arxiv
 from tqdm import tqdm
 from pathlib import Path
+import logging
 import pickle
 
 class Paper:
@@ -28,10 +29,9 @@ if __name__ == "__main__":
     max_results = 10_000
 
     client = arxiv.Client()
-    
-    # Search for the 10 most recent articles matching the keyword "quantum."
+    request = 'recommender'
     search = arxiv.Search(
-    query = "recsys",
+    query = request,
     max_results = max_results,
     sort_by = arxiv.SortCriterion.Relevance
     )
@@ -42,20 +42,24 @@ if __name__ == "__main__":
         try:
             paper_arxiv.download_pdf(dirpath=dirpath, filename=f"{paper_arxiv.title}.pdf",)
             
-        except:
+            pdf_path = Path(dirpath) / f"{paper_arxiv.title}.pdf"
+
+            text = extract_text_from_pdf(str(pdf_path))
+            
+            references_text = find_references_section(text)
+
+            paper_names = extract_paper_names(references_text)
+
+            papers.append(Paper(paper_arxiv.entry_id,  paper_arxiv.title, paper_arxiv.authors, paper_arxiv.published, paper_names))
+
+
+            with open(Path(dirpath) / f'papers_stucture_{request}.pickle', 'wb') as handle:
+                pickle.dump(papers, handle, protocol=pickle.HIGHEST_PROTOCOL)
+            
+        except Exception as e:
+            print(e)
+            logging.info(f"Paper {paper_arxiv.title} can not be downloaded!")
             continue
 
         
-        pdf_path = Path(dirpath) / f"{paper_arxiv.title}.pdf"
         
-        text = extract_text_from_pdf(str(pdf_path))
-
-        references_text = find_references_section(text)
-
-        paper_names = extract_paper_names(references_text)
-
-        papers.append(Paper(paper_arxiv.entry_id,  paper_arxiv.title, paper_arxiv.authors, paper_arxiv.published, paper_names))
-
-
-        with open(Path(dirpath) / 'papers_stucture.pickle', 'wb') as handle:
-            pickle.dump(papers, handle, protocol=pickle.HIGHEST_PROTOCOL)
