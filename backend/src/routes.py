@@ -101,50 +101,7 @@ def register():
 
     return jsonify({'message': 'User created successfully'}), 201
 
-# Эндпоинт для изменения пароля
-@app.route('/change_password', methods=['POST'])
-def change_password():
-    token = request.headers.get('Authorization')
-    if not token:
-        return jsonify({'message': 'Token is missing'}), 403
-
-    login = verify_token(token)
-    if isinstance(login, str) and 'Token' in login:
-        return jsonify({'message': login}), 403
-
-    new_password = request.json.get('new_password')
-    if not new_password:
-        return jsonify({'message': 'New password is required'}), 400
-
-    Session = sessionmaker(engine)
-    with Session() as session:
-        user = session.execute(select(Users).where(Users.login == login)).scalar()
-        if not user:
-            return jsonify({'message': 'User not found'}), 404
-
-        user.password_hash = hash_f(new_password)
-        session.commit()
-
-    return jsonify({'message': 'Password changed successfully'}), 200
-
-# Эндпоинт для удаления пользователя
-@app.route('/delete_user', methods=['DELETE'])
-def delete_user():
-    token = request.headers.get('Authorization')
-    if not token:
-        return jsonify({'message': 'Token is missing'}), 403
-
-    login = verify_token(token)
-    if isinstance(login, str) and 'Token' in login:
-        return jsonify({'message': login}), 403
-
-    Session = sessionmaker(engine)
-    with Session() as session:
-        user = session.execute(select(Users).where(Users.login == login)).scalar()
-        if not user:
-            return jsonify({'message': 'User not found'}), 404
-
-        session.delete(user)
-        session.commit()
+@app.route('/search', methods=['GET'])
+def search():
 
     return jsonify({'message': 'User deleted successfully'}), 200
