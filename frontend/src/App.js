@@ -1,26 +1,12 @@
-import React, {useEffect} from "react"
-import {BrowserRouter, Routes, Route} from 'react-router-dom'
-import Authorization from "./routes/Authorization"
-import Registration from "./routes/Registration"
+import AuthProvider from "./provider/authProvider";
+import Routes from "./routes";
 
-export default function App() {
-
-    return (
-        <BrowserRouter>
-            <Routes>
-                <Route path="authorization" element={<Authorization/>}/>
-                <Route path="registration" element={<Registration/>}/>
-                {/* </Route>
-                <Route path="/search">
-                    <Search/>
-                </Route>
-                <Route path="/paper">
-                    <Paper/>
-                </Route>
-                <Route path="/profile">
-                    <Profile/>
-                </Route> */} 
-            </Routes>
-        </BrowserRouter>
-    )
+function App() {
+  return (
+    <AuthProvider>
+      <Routes />
+    </AuthProvider>
+  );
 }
+
+export default App;
