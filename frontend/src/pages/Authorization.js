@@ -1,11 +1,10 @@
 import React, { useState } from "react"
 
+
 export default function Authorization() {
 
     const [login, setLogin] = useState('');
     const [password, setPassword] = useState('');
-    // const [Jwt, setJwt] = useState('');
-
  
     function handleLogin(event) {
         setLogin(event.target.value);
@@ -15,7 +14,8 @@ export default function Authorization() {
         setPassword(event.target.value);
     };
 
-    function handleSubmit(event) {
+    async function handleSubmit(event) {
+        
         fetch('http://0.0.0.0:5000/login',
             {
                 method: 'post',
@@ -27,11 +27,14 @@ export default function Authorization() {
             }
         )
         .then((res) => res.json())
-        .then(json => localStorage.setItem(
-            'token', json.token) 
-        );
+        .then(json => {
+            localStorage.setItem('token', json.token);
+            localStorage.setItem('user', login);
+        }
+        );        
         event.preventDefault();
     };
+    
 
     return (
         <div>

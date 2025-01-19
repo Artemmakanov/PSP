@@ -4,19 +4,24 @@ import { ProtectedRoute } from "./ProtectedRoute";
 import Authorization from "../pages/Authorization"
 import Registration from "../pages/Registration"
 import Search from "../pages/Search"
+import Logout from "../pages/Logout";
 
 const Routes = () => {
-  const { token } = useAuth();
+  const { token, user } = useAuth();
 
   // Define public routes accessible to all users
   const routesForPublic = [
     {
-      path: "/authorization",
-      element: <Authorization/>,
-    },
-    {
       path: "/registration",
       element: <Registration/>,
+    },
+    {
+      path: "/logout",
+      element: <Logout/>,
+    },
+    {
+      path: "/authorization",
+      element: <Authorization/>,
     },
   ];
 
@@ -29,14 +34,19 @@ const Routes = () => {
         {
           path: "/search",
           element: <Search/>,
-        },
+        }
       ],
     },
+  ];
+
+  const routesForNotAuthenticatedOnly = [
+    
   ];
 
   // Combine and conditionally include routes based on authentication status
   const router = createBrowserRouter([
     ...routesForPublic,
+    ...(!token ? routesForNotAuthenticatedOnly : []),
     ...routesForAuthenticatedOnly,
   ]);
 
