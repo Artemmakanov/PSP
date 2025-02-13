@@ -51,7 +51,7 @@ const ArticlePage = () => {
           <h3>Рекомендации</h3>
           <ul>
             {recommendations.map((rec) => (
-              <li key={rec.id} onClick={() => navigate(`/article/${rec.id}`)}>
+              <li key={rec.id} onClick={() => navigate(`${BASE_URL}/article/${rec.id}`)}>
                 {rec.title}
               </li>
             ))}
@@ -59,7 +59,7 @@ const ArticlePage = () => {
           <h3>Добавили в избранное</h3>
           <ul>
             {favoriteUsers.map((user) => (
-              <li key={user} onClick={() => navigate(`/user/${user}`)}>
+              <li key={user} onClick={() => navigate(`${BASE_URL}/user/${user}`)}>
                 {user}
               </li>
             ))}

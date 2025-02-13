@@ -9,3 +9,10 @@ curl -H  "Content-Type: application/json" -X POST -L http://0.0.0.0:5000/login -
 
 # Protected
 curl -H  "Content-Type: application/json" -H "Authorization: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJsb2dpbiI6ImFiY2QiLCJleHAiOjE3Mzk0NTg2MzN9.E_KUF0WDwZoXqe1V6dzeXaUMMrqEOpNSUSYPx5XvgBA" -X GET -L http://0.0.0.0:5000/protected 
+
+
+# Protected
+curl -H  "Content-Type: application/json" -X GET -L http://localhost:5000/search  --data '{"q": ""}'
+
+# Protected
+curl -H  "Content-Type: application/json" -X GET -L http://localhost:5000/pdf/1 

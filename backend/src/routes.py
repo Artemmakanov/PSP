@@ -101,7 +101,66 @@ def register():
 
     return jsonify({'message': 'User created successfully'}), 201
 
+
 @app.route('/search', methods=['GET'])
 def search():
+    query = request.args.get('q'),
+    response = [
+        {'id': 1, 'title': 'Название 1'}, 
+        {'id': 10, 'title': 'Название 10'}, 
+    ]
+    return jsonify(response), 200
 
-    return jsonify({'message': 'User deleted successfully'}), 200
+
+@app.route('/page', methods=['GET'])
+def page():
+    article_id = request.args.get('id'),
+    response = [
+        {'title': 'Название 1', 'pdf_url': ''}, 
+        {'title': 'Название 10'}, 
+    ]
+    return jsonify(response), 200
+
+# Фейковая база данных
+ARTICLES = {
+    '2': {"title": "Научная статья 2", "pdf_path": "../pdfs/2501.18805v1.pdf"},
+    '1': {"title": "Научная статья 1", "pdf_path": "../pdfs/2502.08309v1.pdf"},
+}
+
+
+@app.route("/pdf/<article_id>")
+def serve_pdf(article_id):
+    if article_id not in ARTICLES:
+        return "Файл не найден", 404
+
+    pdf_path = ARTICLES[article_id]["pdf_path"]
+    return send_file(pdf_path, mimetype="application/pdf")
+
+
+@app.route('/get_similar', methods=['GET'])
+def get_similar():
+    article_id = request.args.get('id'),
+    response = [
+        {'id': 2, 'title': 'Название 2'}, 
+        {'id': 20, 'title': 'Название 20'}, 
+    ]
+    return jsonify(response), 200
+
+
+@app.route('/get_paper_users', methods=['GET'])
+def get_paper_users():
+    article_id = request.args.get('id'),
+    response = [
+        ['abcd', 'a']
+    ]
+    return jsonify(response), 200
+
+
+@app.route('/get_users_papers', methods=['GET'])
+def get_users_papers():
+    login = request.args.get('login'),
+    response = [
+        {'id': 2, 'title': 'Название 2'}, 
+        {'id': 20, 'title': 'Название 20'}, 
+    ]
+    return jsonify(response), 200
