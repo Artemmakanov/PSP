@@ -1,52 +1,59 @@
-import React, { useState } from "react"
 
+import React, { useState } from "react";
+import { login } from "../api/auth";
+import { saveToken } from "../helpers/auth";
+import { useNavigate } from "react-router-dom";
 
-export default function Authorization() {
+function Authorization({ setUser }) {
+  const [loginData, setLoginData] = useState({ login: "", password: "" });
+  const navigate = useNavigate();
 
-    const [login, setLogin] = useState('');
-    const [password, setPassword] = useState('');
- 
-    function handleLogin(event) {
-        setLogin(event.target.value);
-    };
+  const handleChange = (e) => {
+    setLoginData({ ...loginData, [e.target.name]: e.target.value });
+  };
 
-    function handlePassword(event) {
-        setPassword(event.target.value);
-    };
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    try {
+      const { token } = await login(loginData);
+      saveToken(token);
+      setUser({ login: loginData.login, fullName: "Демо Юзер" }); // TODO: заменить демо-данные
+      navigate("/protected");
+    } catch (err) {
+      alert("Авторизация не удалась: " + err.message);
+    }
+  };
 
-    async function handleSubmit(event) {
-        
-        fetch('http://0.0.0.0:5000/login',
-            {
-                method: 'post',
-                headers: {'Content-Type':'application/json'},
-                body: JSON.stringify({
-                     "password": password,
-                     "login": login 
-                })
-            }
-        )
-        .then((res) => res.json())
-        .then(json => {
-            localStorage.setItem('token', json.token);
-            localStorage.setItem('user', login);
-        }
-        );        
-        event.preventDefault();
-    };
-    
-
-    return (
-        <div>
-            <form onSubmit={handleSubmit}>
-                <label>
-                    login input: <input name="myLogin" onChange={e=>handleLogin(e)}/>
-                </label>
-                <label>
-                    password input: <input name="myPassword" onChange={e=>handlePassword(e)}/>
-                </label>
-            <input type="submit" value="Login" />
-            </form>
-        </div>
-    );
+  return (
+    <div className="page">
+      <h2>Authorization</h2>
+      <form onSubmit={handleSubmit}>
+        <label>
+          Login:
+          <input
+            type="text"
+            name="login"
+            value={loginData.login}
+            onChange={handleChange}
+            required
+          />
+        </label>
+        <br />
+        <label>
+          Password:
+          <input
+            type="password"
+            name="password"
+            value={loginData.password}
+            onChange={handleChange}
+            required
+          />
+        </label>
+        <br />
+        <button type="submit">Log In</button>
+      </form>
+    </div>
+  );
 }
+
+export default Authorization;
