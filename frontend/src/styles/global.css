@@ -1,81 +1,48 @@
-
 body {
-    font-family: Arial, sans-serif;
-    margin: 0;
-    padding: 0;
-    background-color: #f4f4f9;
-  }
-  
-  h2 {
-    color: #333;
-  }
-  
-  .page {
-    margin: 20px;
-  }
-  
-  form {
-    padding: 10px 0;
-  }
-  
-  input {
-    padding: 5px;
-    margin: 5px;
-  }
-  
-  button {
-    padding: 8px 15px;
-    background-color: #007bff;
-    color: #fff;
-    border: none;
-    border-radius: 3px;
-    cursor: pointer;
-  }
-  
-  button:hover {
-    background-color: #0056b3;
-  }
-  
-  /* src/styles/navbar.css */
-  .navbar {
-    background-color: #007bff;
-    color: white;
-    padding: 10px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-  
-  .navbar ul {
-    list-style: none;
-    display: flex;
-    gap: 15px;
-    margin: 0;
-    padding: 0;
-  }
-  
-  .navbar ul li {
-    display: inline;
-  }
-  
-  .navbar ul li a {
-    text-decoration: none;
-    color: white;
-  }
-  
-  .user-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-  }
-  
-  .user-info button {
-    background-color: white;
-    color: #007bff;
-    padding: 5px 10px;
-    border-radius: 3px;
-  }
-  
-  .user-info button:hover {
-    background-color: #ddd;
-  }
+  font-family: Arial, sans-serif;
+  margin: 0;
+  padding: 0;
+}
+
+.auth-container {
+  max-width: 300px;
+  margin: 50px auto;
+  text-align: center;
+}
+
+.auth-container form {
+  display: flex;
+  flex-direction: column;
+}
+
+.auth-container input {
+  margin: 5px 0;
+  padding: 8px;
+}
+
+.auth-container button {
+  padding: 10px;
+  background: black;
+  color: white;
+  border: none;
+  cursor: pointer;
+}
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  padding: 10px 20px;
+  background: #f4f4f4;
+}
+
+.nav-links {
+  display: flex;
+  gap: 10px;
+}
+
+.nav-links button {
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: blue;
+}

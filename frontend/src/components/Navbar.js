@@ -1,32 +1,34 @@
-
-import React from "react";
+import { useContext } from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { getToken, removeToken } from "../helpers/auth";
+import { AuthContext } from "../context/AuthContext";
 
-function Navbar({ user }) {
+const Navbar = () => {
+  const { user, logout } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
-    removeToken();
+    logout();
     navigate("/login");
   };
 
   return (
     <nav className="navbar">
-      <ul>
-        <li><Link to="/protected">Protected Route</Link></li>
-        <li><Link to="/login">Authorization</Link></li>
-        <li><Link to="/register">Registration</Link></li>
-      </ul>
-
-      {user ? (
-        <div className="user-info">
-          <span>{user.fullName} ({user.login})</span>
-          <button onClick={handleLogout}>Logout</button>
-        </div>
-      ) : null}
+      <Link to="/search" className="nav-brand">Рекомендательная система</Link>
+      <div className="nav-links">
+        {user ? (
+          <>
+            <span>{user.login}</span>
+            <button onClick={handleLogout}>Выйти</button>
+          </>
+        ) : (
+          <>
+            <Link to="/login">Вход</Link>
+            <Link to="/register">Регистрация</Link>
+          </>
+        )}
+      </div>
     </nav>
   );
-}
+};
 
 export default Navbar;
