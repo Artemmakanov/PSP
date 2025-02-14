@@ -7,7 +7,7 @@ const UserPage = () => {
   const [favorites, setFavorites] = useState([]);
   const [error, setError] = useState(null);
   const navigate = useNavigate();
-
+  
   useEffect(() => {
     const fetchFavorites = async () => {
       try {

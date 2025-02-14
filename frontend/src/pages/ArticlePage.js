@@ -60,7 +60,7 @@ const ArticlePage = () => {
           <h3>Добавили в избранное</h3>
           <ul>
             {favoriteUsers.map((user) => (
-              <li key={user} onClick={() => navigate(`/user/${user}`)}>
+              <li key={user} onClick={() => navigate(`/user/${user.login}`)}>
                 {user.login}
               </li>
             ))}
