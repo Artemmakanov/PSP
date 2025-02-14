@@ -46,3 +46,10 @@ body {
   cursor: pointer;
   color: blue;
 }
+
+.article-container iframe {
+  width: 50%;
+  height: 60vh; /* 80% от высоты экрана */
+  border: none;
+}
+

@@ -1,4 +1,4 @@
-from flask import request, jsonify
+from flask import request, jsonify, send_file
 from sqlalchemy.orm import sessionmaker
 from sqlalchemy import select
 from sqlalchemy import create_engine
@@ -115,10 +115,8 @@ def search():
 @app.route('/page', methods=['GET'])
 def page():
     article_id = request.args.get('id'),
-    response = [
-        {'title': 'Название 1', 'pdf_url': ''}, 
-        {'title': 'Название 10'}, 
-    ]
+    response = {'title': 'Название 1', 'pdf_url': 'http://localhost:5000/article/1'}
+    
     return jsonify(response), 200
 
 # Фейковая база данных
@@ -128,7 +126,7 @@ ARTICLES = {
 }
 
 
-@app.route("/pdf/<article_id>")
+@app.route("/article/<article_id>")
 def serve_pdf(article_id):
     if article_id not in ARTICLES:
         return "Файл не найден", 404
@@ -151,7 +149,8 @@ def get_similar():
 def get_paper_users():
     article_id = request.args.get('id'),
     response = [
-        ['abcd', 'a']
+        {'login': 'abcd'}, 
+        {'login': 'ac'}, 
     ]
     return jsonify(response), 200
 

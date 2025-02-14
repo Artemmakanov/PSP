@@ -16,6 +16,7 @@ const ArticlePage = () => {
         const resArticle = await fetch(`${BASE_URL}/page?id=${id}`);
         if (!resArticle.ok) throw new Error("Ошибка загрузки статьи");
         const articleData = await resArticle.json();
+        console.log(articleData)
 
         const resRecs = await fetch(`${BASE_URL}/get_similar?id=${id}`);
         if (!resRecs.ok) throw new Error("Ошибка загрузки рекомендаций");
@@ -51,7 +52,7 @@ const ArticlePage = () => {
           <h3>Рекомендации</h3>
           <ul>
             {recommendations.map((rec) => (
-              <li key={rec.id} onClick={() => navigate(`${BASE_URL}/article/${rec.id}`)}>
+              <li key={rec.id} onClick={() => navigate(`/article/${rec.id}`)}>
                 {rec.title}
               </li>
             ))}
@@ -59,8 +60,8 @@ const ArticlePage = () => {
           <h3>Добавили в избранное</h3>
           <ul>
             {favoriteUsers.map((user) => (
-              <li key={user} onClick={() => navigate(`${BASE_URL}/user/${user}`)}>
-                {user}
+              <li key={user} onClick={() => navigate(`/user/${user}`)}>
+                {user.login}
               </li>
             ))}
           </ul>
