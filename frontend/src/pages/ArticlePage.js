@@ -47,6 +47,7 @@ const ArticlePage = () => {
       {article && (
         <>
           <h2>{article.title}</h2>
+          <h2>{article.link}</h2>
           <iframe src={article.pdf_url} title="PDF статьи"></iframe>
           <button onClick={handleFavorite}>Добавить в избранное</button>
           <h3>Рекомендации</h3>

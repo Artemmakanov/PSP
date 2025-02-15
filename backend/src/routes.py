@@ -10,8 +10,11 @@ import datetime
 
 from .db_models import Users
 from .config import conf
+from .ml import PapersHandler
 
 engine = create_engine(conf.postgres_url)    
+
+ph = PapersHandler()
 
 # Секретный ключ для подписи JWT
 SECRET_KEY = 'your_secret_key'
@@ -104,50 +107,41 @@ def register():
 
 @app.route('/search', methods=['GET'])
 def search():
-    query = request.args.get('q'),
-    response = [
-        {'id': 1, 'title': 'Название 1'}, 
-        {'id': 10, 'title': 'Название 10'}, 
-    ]
+    query = request.args.get('q')
+
+    response = ph.search(query)
     return jsonify(response), 200
 
 
 @app.route('/page', methods=['GET'])
 def page():
-    article_id = request.args.get('id'),
-    response = {'title': 'Название 1', 'pdf_url': 'http://localhost:5000/article/1'}
-    
+    id = request.args.get('id')
+
+    response = ph.ger_paper(id)
+        
     return jsonify(response), 200
 
-# Фейковая база данных
-ARTICLES = {
-    '2': {"title": "Научная статья 2", "pdf_path": "../pdfs/2501.18805v1.pdf"},
-    '1': {"title": "Научная статья 1", "pdf_path": "../pdfs/2502.08309v1.pdf"},
-}
 
-
-@app.route("/article/<article_id>")
-def serve_pdf(article_id):
-    if article_id not in ARTICLES:
+@app.route("/article/<id>")
+def serve_pdf(id):
+    try:
+        pdf_path = ph.get_pdf_path(id)
+    except:
         return "Файл не найден", 404
-
-    pdf_path = ARTICLES[article_id]["pdf_path"]
     return send_file(pdf_path, mimetype="application/pdf")
 
 
 @app.route('/get_similar', methods=['GET'])
 def get_similar():
-    article_id = request.args.get('id'),
-    response = [
-        {'id': 2, 'title': 'Название 2'}, 
-        {'id': 20, 'title': 'Название 20'}, 
-    ]
+    id = request.args.get('id')
+
+    response = ph.get_similar_articles(id)
     return jsonify(response), 200
 
 
 @app.route('/get_paper_users', methods=['GET'])
 def get_paper_users():
-    article_id = request.args.get('id'),
+    article_id = request.args.get('id')
     response = [
         {'login': 'abcd'}, 
         {'login': 'ac'}, 
@@ -157,7 +151,7 @@ def get_paper_users():
 
 @app.route('/get_users_papers', methods=['GET'])
 def get_users_papers():
-    login = request.args.get('login'),
+    login = request.args.get('login')
     response = [
         {'id': 2, 'title': 'Название 2'}, 
         {'id': 20, 'title': 'Название 20'}, 

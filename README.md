@@ -16,3 +16,8 @@ curl -H  "Content-Type: application/json" -X GET -L http://localhost:5000/search
 
 # Protected
 curl -H  "Content-Type: application/json" -X GET -L http://localhost:5000/pdf/1 
+
+
+curl -H  "Content-Type: application/json" -X GET -L http://localhost:5000/search?q=fairness
+
+curl -H  "Content-Type: application/json" -X GET -L http://localhost:5000/page?q=fairness
