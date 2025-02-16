@@ -9,7 +9,14 @@ from nltk.stem import PorterStemmer
 from nltk.tokenize import word_tokenize
 import numpy as np
 from annoy import AnnoyIndex
- 
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
+from .db_models import Users, Favourites, Papers
+from .config import conf
+
+engine = create_engine(conf.postgres_url)    
+
 ps = PorterStemmer()
 
 class PapersHandler:
@@ -20,8 +27,9 @@ class PapersHandler:
             self.filtered_paper2idpaperid = pickle.load(handle)
         with open('/home/admin/PSP/backend/pdfs/paperid2filtered_paperid.pickle', 'rb') as handle:
             self.paperid2filtered_paperid = pickle.load(handle)
-        with open('/home/admin/PSP/backend/pdfs/papers.pickle', 'rb') as handle:
-            self.papers = pickle.load(handle)
+
+        # with open('/home/admin/PSP/backend/pdfs/papers.pickle', 'rb') as handle:
+        #     self.papers = pickle.load(handle)
 
         f = 30
         self.annoy_index = AnnoyIndex(f, 'euclidean')
@@ -35,21 +43,25 @@ class PapersHandler:
             self.filtered_paper2idpaperid[filtered_paperid] 
             for filtered_paperid in filtered_paperids]
         
-        return [
-            {
-                'id': paperid,
-                'title': self.papers[paperid]['title'],
-                'link': self.generate_citation_link(self.papers[paperid])
-            }
-            for paperid in paperids
-        ]
+        results = []
+
+        for paperid in paperids:
+            paper = self.get_paper(paperid)
+            results.append(
+                {
+                    'id': paperid,
+                    'title': paper['title'],
+                    'link': paper['link']
+                } 
+            )
+        return results
         
     def search(self, query: str):
         query_stems = set(ps.stem(w) for w in query.split())
 
         results = []
         for paperid, filtered_paperid in self.paperid2filtered_paperid.items():
-            paper = self.papers[paperid]
+            paper = self.get_paper(paperid)
             if len(paper['stems'] & query_stems)> 0:
                 results.append({
                     'id': paperid,
@@ -59,24 +71,30 @@ class PapersHandler:
         return results
 
 
-    def ger_paper(self, id: str):
-        paper = self.papers[int(id)]
+    def get_paper(self, id: str):
+        Session = sessionmaker(engine)
+        with Session() as session:
+            paper = session.query(Papers).filter_by(id=id).first()
+
         return {
-            'title': paper['title'],
-            'pdf_url': self.generate_pdf_url(id),
-            'link': self.generate_citation_link(paper)}
+            'title': paper.title,
+            'pdf_url': paper.filepath,
+            'link': paper.link_ru,
+            'stems': set(paper.stems.split(','))}
     
+
+
+
+def generate_citation_link(paper):
+    return f"{paper['author']} et al. {paper['year']}. {paper['title']}"
+
+
+def get_pdf_path(id: str):
+    return f"../pdfs/{id}.pdf"
+
+
+def generate_pdf_url(id):
+    return f'http://localhost:5000/article/{id}'
     
-    def generate_citation_link(self, paper):
-        return f"{paper['author']} et al. {paper['year']}. {paper['title']}"
 
-
-    def generate_pdf_url(self, id):
-        return f'http://localhost:5000/article/{id}'
         
-
-    def get_pdf_path(self, id: str):
-        return f"../pdfs/{id}.pdf"
-        
-
-

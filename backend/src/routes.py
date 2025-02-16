@@ -8,9 +8,9 @@ import hashlib
 import jwt
 import datetime
 
-from .db_models import Users
+from .db_models import Users, Favourites, Papers
 from .config import conf
-from .ml import PapersHandler
+from .ml import PapersHandler, generate_pdf_url, get_pdf_path
 
 engine = create_engine(conf.postgres_url)    
 
@@ -117,15 +117,18 @@ def search():
 def page():
     id = request.args.get('id')
 
-    response = ph.ger_paper(id)
-        
+    response = ph.get_paper(id)
+    response = {
+        'title': response['title'],
+        'pdf_url': generate_pdf_url(id),
+        'link': response['link']}
     return jsonify(response), 200
 
 
 @app.route("/article/<id>")
 def serve_pdf(id):
     try:
-        pdf_path = ph.get_pdf_path(id)
+        pdf_path = get_pdf_path(id)
     except:
         return "Файл не найден", 404
     return send_file(pdf_path, mimetype="application/pdf")
@@ -141,11 +144,18 @@ def get_similar():
 
 @app.route('/get_paper_users', methods=['GET'])
 def get_paper_users():
-    article_id = request.args.get('id')
-    response = [
-        {'login': 'abcd'}, 
-        {'login': 'ac'}, 
-    ]
+    id = int(request.args.get('id'))
+
+    Session = sessionmaker(engine)
+    with Session() as session:
+        stmt = (
+            select(Users.login)
+            .join(Favourites, Users.id == Favourites.user_id)
+            .where(Favourites.paper_id == id)
+            .distinct()
+        )
+        response = session.scalars(stmt).all()
+
     return jsonify(response), 200
 
 
@@ -157,3 +167,27 @@ def get_users_papers():
         {'id': 20, 'title': 'Название 20'}, 
     ]
     return jsonify(response), 200
+
+
+@app.route('/add_paper_to_favourites', methods=['POST'])
+def add_paper_to_favourites():
+    print(request.args)
+    login = request.args.get('login')
+    id = int(request.args.get('id'))
+
+    Session = sessionmaker(engine)
+    with Session() as session:
+        user = session.execute(select(Users).where(Users.login == login)).scalar_one_or_none()
+        if user is None:
+            raise ValueError("User not found")
+        
+        paper = session.execute(select(Papers).where(Papers.id == id)).scalar_one_or_none()
+        if paper is None:
+            raise ValueError("Paper not found")
+        
+        favourite = Favourites(user_id=user.id, paper_id=paper.id)
+        session.add(favourite)
+        session.commit()
+
+
+    return jsonify([]), 200

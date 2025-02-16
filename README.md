@@ -20,4 +20,9 @@ curl -H  "Content-Type: application/json" -X GET -L http://localhost:5000/pdf/1
 
 curl -H  "Content-Type: application/json" -X GET -L http://localhost:5000/search?q=fairness
 
-curl -H  "Content-Type: application/json" -X GET -L http://localhost:5000/page?q=fairness
+curl -H  "Content-Type: application/json" -X GET -L http://localhost:5000/page?id=1
+
+curl -H  "Content-Type: application/json" -X GET -L http://localhost:5000/get_similar?id=1
+
+
+curl -H  "Content-Type: application/json" -X POST -L http://0.0.0.0:5000/add_paper_to_favourites?login=abcd?id=1

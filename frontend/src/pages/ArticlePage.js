@@ -3,7 +3,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { BASE_URL } from "./const"
 
 const ArticlePage = () => {
-  const { id } = useParams();
+  const { id, login } = useParams();
   const [article, setArticle] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
   const [favoriteUsers, setFavoriteUsers] = useState([]);
@@ -39,6 +39,7 @@ const ArticlePage = () => {
 
   const handleFavorite = async () => {
     // Здесь должна быть логика добавления в избранное (если поддерживается backend)
+    await fetch(`${BASE_URL}/add_paper_to_favourites?login=${login}?id=${id}`);
   };
 
   return (

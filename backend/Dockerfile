@@ -13,4 +13,6 @@ RUN pip install -r requirements.txt
 
 EXPOSE 5000
 
+CMD ["python", "fill_paper_table.py"]
+
 CMD ["python", "run.py"]
