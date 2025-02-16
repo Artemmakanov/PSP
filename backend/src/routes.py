@@ -155,23 +155,32 @@ def get_paper_users():
             .distinct()
         )
         response = session.scalars(stmt).all()
-
     return jsonify(response), 200
 
 
 @app.route('/get_users_papers', methods=['GET'])
 def get_users_papers():
     login = request.args.get('login')
+    
+    Session = sessionmaker(engine)
+    with Session() as session:
+        stmt = (
+            select(Papers)
+            .join(Favourites, Papers.id == Favourites.paper_id)
+            .join(Users, Users.id == Favourites.user_id)
+            .where(Users.login == login)
+            .distinct()
+        )
+        response = session.execute(stmt).fetchall()
     response = [
-        {'id': 2, 'title': 'Название 2'}, 
-        {'id': 20, 'title': 'Название 20'}, 
+        {'id': r[0].id, 'title': r[0].title} for r in response
     ]
+
     return jsonify(response), 200
 
 
 @app.route('/add_paper_to_favourites', methods=['POST'])
 def add_paper_to_favourites():
-    print(request.args)
     login = request.args.get('login')
     id = int(request.args.get('id'))
 

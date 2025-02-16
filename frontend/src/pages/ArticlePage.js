@@ -1,9 +1,14 @@
 import { useEffect, useState } from "react";
+import { useContext } from "react";
+
 import { useParams, useNavigate } from "react-router-dom";
 import { BASE_URL } from "./const"
+import { AuthContext } from "../context/AuthContext";
+
 
 const ArticlePage = () => {
-  const { id, login } = useParams();
+  const { user } = useContext(AuthContext);
+  const { id } = useParams();
   const [article, setArticle] = useState(null);
   const [recommendations, setRecommendations] = useState([]);
   const [favoriteUsers, setFavoriteUsers] = useState([]);
@@ -39,7 +44,7 @@ const ArticlePage = () => {
 
   const handleFavorite = async () => {
     // Здесь должна быть логика добавления в избранное (если поддерживается backend)
-    await fetch(`${BASE_URL}/add_paper_to_favourites?login=${login}?id=${id}`);
+    await fetch(`${BASE_URL}/add_paper_to_favourites?login=${user.login}&id=${id}`, {method: "POST"});
   };
 
   return (
@@ -61,9 +66,9 @@ const ArticlePage = () => {
           </ul>
           <h3>Добавили в избранное</h3>
           <ul>
-            {favoriteUsers.map((user) => (
-              <li key={user} onClick={() => navigate(`/user/${user.login}`)}>
-                {user.login}
+            {favoriteUsers.map((login) => (
+              <li key={login} onClick={() => navigate(`/user/${login}`)}>
+                {login}
               </li>
             ))}
           </ul>
