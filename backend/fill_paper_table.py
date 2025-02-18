@@ -13,7 +13,7 @@ ps = PorterStemmer()
 
 ph = PapersHandler()
 
-engine = create_engine('postgresql+psycopg2://postgres:postgres@0.0.0.0:5432/recsys')
+engine = create_engine('postgresql+psycopg2://postgres:postgres@postgres:5432/recsys')
 
 Base.metadata.create_all(engine)
 

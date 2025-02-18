@@ -28,4 +28,4 @@ curl -H  "Content-Type: application/json" -X GET -L http://localhost:5000/get_si
 curl -H  "Content-Type: application/json" -X POST -L http://0.0.0.0:5000/add_paper_to_favourites?login=abcd?id=1
 
 
-curl -H  "Content-Type: application/json" -X POST -L http://0.0.0.0:5000/get_users_papers?login=abcd
+curl -H  "Content-Type: application/json" -X GET -L http://0.0.0.0:5000/get_users_papers?login=abcd
